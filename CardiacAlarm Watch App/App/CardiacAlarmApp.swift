@@ -11,7 +11,7 @@ import SwiftUI
 struct CardiacAlarm_Watch_AppApp: App {
     var body: some Scene {
         WindowGroup {
-            HeartRateDisplayScreen()
+            TopPagingView()
         }
     }
 }
