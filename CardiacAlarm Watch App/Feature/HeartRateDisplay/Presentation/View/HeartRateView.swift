@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HeartRateView: View {
 
-    @StateObject var vm: HeartRateViewModel
+    @EnvironmentObject var workoutManager: WorkoutManager
 
     var body: some View {
         HStack {
@@ -22,12 +22,19 @@ struct HeartRateView: View {
                     .foregroundStyle(.red)
                     .font(.title)
                 HStack(alignment: .top) {
-                    Text("\(Int(vm.currentBPM))")
-                        .font(.system(size: 60))
-                        .padding(.top, -10)
+                    Text(workoutManager.heartRate.formatted(
+                        .number.precision(.fractionLength(0))
+                    ))
+                    .font(.system(size: 60))
+                    .padding(.top, -10)
                     Text("BPM")
                         .foregroundStyle(.red)
                         .font(.caption2)
+                }
+                if workoutManager.triggerCriticalAlarm {
+                    CriticalSlider()
+                        .padding(.horizontal, 1)
+                        .padding(.bottom, 20)
                 }
                 Spacer()
             }
@@ -35,16 +42,26 @@ struct HeartRateView: View {
         }
         .padding([.leading, .top], 20)
         .ignoresSafeArea()
+        .onChange(of: workoutManager.triggerCriticalAlarm) { _, newValue in
+            playCriticalAlarm(isOn: newValue)
+        }
         .onAppear(perform: {
             Task {
-                await vm.startForegroundMonitoring()
+                workoutManager.requestAuthorization()
             }
         })
+    }
+
+    private func playCriticalAlarm(isOn: Bool) {
+        if isOn {
+            CriticalAudioPlayer.shared.playSound()
+        } else {
+            CriticalAudioPlayer.shared.stop()
+        }
     }
 }
 
 #Preview {
-    HeartRateView(
-        vm: HeartRateViewModel(
-            useCase: HeartRateMonitoringUseCase(heartRateRepo: HeartRateRealTimeRepository()))
-    )}
+    HeartRateView()
+        .environmentObject(WorkoutManager())
+}

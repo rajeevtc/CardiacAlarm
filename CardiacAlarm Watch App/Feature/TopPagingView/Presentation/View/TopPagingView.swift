@@ -12,21 +12,19 @@ enum Tab {
 }
 
 struct TopPagingView: View {
-
     @State private var selection: Tab = .metrics
 
     var body: some View {
         TabView(selection: $selection) {
-            ControlsView().tag(Tab.controls)
-            HeartRateView(
-                vm: HeartRateViewModel(
-                    useCase: HeartRateMonitoringUseCase(heartRateRepo: HeartRateRealTimeRepository())
-                )
-            ).tag(Tab.metrics)
+            ControlsView(selection: $selection)
+                .tag(Tab.controls)
+            HeartRateView()
+                .tag(Tab.metrics)
         }
     }
 }
 
 #Preview {
     TopPagingView()
+        .environmentObject(WorkoutManager())
 }
