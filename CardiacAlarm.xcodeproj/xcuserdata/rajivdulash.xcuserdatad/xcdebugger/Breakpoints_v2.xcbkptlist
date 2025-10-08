@@ -78,8 +78,8 @@
             filePath = "CardiacAlarm Watch App/Core/Utilities/WorkoutManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
+            startingLineNumber = "233"
+            endingLineNumber = "233"
             landmarkName = "workoutBuilder(_:didCollectDataOf:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -87,33 +87,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "21916FA1-9D82-483F-BB78-A375EDF64FFB"
+            uuid = "0C6DD03B-9163-4120-9CF0-2505FDCA6E69"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CardiacAlarm Watch App/App/CardiacAlarmApp.swift"
+            filePath = "CardiacAlarm Watch App/Feature/HeartRateDisplay/Presentation/View/HeartRateView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7EAC9B8E-93AC-427D-AB72-F9B22F2EFBC6"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CardiacAlarm Watch App/App/CardiacAlarmApp.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "68"
+            endingLineNumber = "68"
+            landmarkName = "handleUserWatchWornOnOff(isOn:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

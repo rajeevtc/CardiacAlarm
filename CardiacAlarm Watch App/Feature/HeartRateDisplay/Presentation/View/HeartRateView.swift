@@ -45,6 +45,9 @@ struct HeartRateView: View {
         .onChange(of: workoutManager.triggerCriticalAlarm) { _, newValue in
             playCriticalAlarm(isOn: newValue)
         }
+        .onChange(of: workoutManager.isWorn) { _, newValue in
+            handleUserWatchWornOnOff(isOn: newValue)
+        }
         .onAppear(perform: {
             Task {
                 workoutManager.requestAuthorization()
@@ -57,6 +60,14 @@ struct HeartRateView: View {
             CriticalAudioPlayer.shared.playSound()
         } else {
             CriticalAudioPlayer.shared.stop()
+        }
+    }
+
+    private func handleUserWatchWornOnOff(isOn: Bool) {
+        if isOn {
+            workoutManager.startLiveWorkoutMonitoring()
+        } else {
+            workoutManager.endWorkout()
         }
     }
 }

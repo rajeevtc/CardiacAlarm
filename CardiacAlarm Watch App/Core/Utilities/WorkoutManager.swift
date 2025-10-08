@@ -15,12 +15,17 @@ final class WorkoutManager: NSObject, ObservableObject {
     private let healthStore = HKHealthStore()
     private var workoutSession: HKWorkoutSession?
     private var builder: HKLiveWorkoutBuilder?
+    private var wristTimer: Timer?
 
     @Published var heartRate: Double = 0
     @Published var isActive = false
     @Published var isAuthorized = false
     @Published var sessionState: HKWorkoutSessionState = .notStarted
     @Published var triggerCriticalAlarm = false
+
+    // 🟢 New property
+    @Published var isWorn = false
+    private var lastHeartRateUpdate: Date = .now
 
     // Critical HeartRate Threshold
     private let criticalHeartRateThreshold: Double = 60.0 // The threshold for the critical alarm
@@ -85,12 +90,16 @@ final class WorkoutManager: NSObject, ObservableObject {
             print("Started Activity collection")
             DispatchQueue.main.async {
                 self.sessionState = .running
+                self.startWristMonitoring()
             }
         }
     }
 
     /// Ends the workout session and saves the data.
     func endSession() {
+        wristTimer?.invalidate()
+        wristTimer = nil
+
         guard
             let session = workoutSession,
             let builder = builder,
@@ -110,15 +119,15 @@ final class WorkoutManager: NSObject, ObservableObject {
             DispatchQueue.main.async {
                 self?.builder?.finishWorkout { _, error in
                     self?.sessionState = .ended
-//                    self?.heartRate = 0
-//                    self?.triggerCriticalAlarm = false
                     self?.builder = nil
                     self?.workoutSession = nil
+                    self?.isWorn = false
                 }
             }
         }
     }
 
+    // MARK: - 🫀 Heart Rate Updates
     func updateForStatistics(_ statistics: HKStatistics?) {
         guard let statistics = statistics else { return }
         DispatchQueue.main.async { [weak self] in
@@ -126,11 +135,33 @@ final class WorkoutManager: NSObject, ObservableObject {
             switch statistics.quantityType {
             case HKQuantityType.quantityType(forIdentifier: .heartRate):
                 let heartRateUnit = HKUnit.count().unitDivided(by: HKUnit.minute())
-                self.heartRate = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
-//                let averageHeartRate = statistics.averageQuantity()?.doubleValue(for: heartRateUnit) ?? 0
-                self.triggerCriticalAlarm = self.heartRate <= self.criticalHeartRateThreshold && self.heartRate != 0
+                let bpm = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
+                //  let averageHeartRate = statistics.averageQuantity()?.doubleValue(for: heartRateUnit) ?? 0
+
+                self.heartRate = bpm
+                self.lastHeartRateUpdate = Date()
+
+                // 🟢 Update wearing status based on heart rate
+                self.isWorn = bpm > 0
+                self.triggerCriticalAlarm = bpm <= self.criticalHeartRateThreshold && bpm != 0
             default:
                 return
+            }
+        }
+    }
+
+    // MARK: - 🟢 Wrist Detection Timer
+    private func startWristMonitoring() {
+        wristTimer?.invalidate()
+        wristTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+
+            let elapsed = Date().timeIntervalSince(self.lastHeartRateUpdate)
+            if elapsed > 10 { // no HR updates for 20+ sec
+                DispatchQueue.main.async {
+                    self.isWorn = false
+                    print("🛑 Watch likely removed from wrist — no HR update for \(Int(elapsed)) sec.")
+                }
             }
         }
     }
