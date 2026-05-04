@@ -14,11 +14,11 @@ The CardiacAlarm app is a watchOS application designed for accurate heart rate m
 - Compatible Apple Watch models
 
 ## 📝 Installation & Setup Instructions 
-1. Download the CardiacAlarm app from the App Store.
-2. Follow the on-screen instructions to set up the app on your Apple Watch.
+1. Download the CardiacAlarm app source code.
+2. Follow the usual instructions to run it through Xcode and install on your Apple Watch.
 
 ## 🏗 Architecture  
-The app follows the MVVM (Model-View-ViewModel) architectural pattern ensuring a clear separation of concerns, enhancing testability and maintainability.
+The app follows the Clean Architecure with the presentation layer using MVVM (Model-View-ViewModel) pattern ensuring a clear separation of concerns, enhancing testability and maintainability.
 
 ## 🔧 Usage Guidelines 
 - Ensure that the app has permission to access heart rate data in the settings.
